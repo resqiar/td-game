@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class PlayerLook : MonoBehaviour
 {
-    public Camera camera;
+    public Transform body;
+    public Transform arm;
+
     private float xRotation = 0f;
     public float xSensitivity = 20f;
     public float ySensitivity = 20f;
+
+    void Start() {
+        // lock cursor
+        Cursor.lockState = CursorLockMode.Locked;
+    }
 
     public void Look(Vector2 input) {
         float mouseX = input.x;
@@ -17,10 +24,10 @@ public class PlayerLook : MonoBehaviour
         xRotation -= (mouseY * Time.deltaTime) * ySensitivity;
         xRotation = Mathf.Clamp(xRotation, -80f, 80f);
 
-        // rotate camera 
-        camera.transform.localRotation =  Quaternion.Euler(xRotation, 0, 0);
+        // rotate the arm (hand)
+        arm.transform.localRotation =  Quaternion.Euler(xRotation, 0f, 0f);
 
-        // rotate player left and right (not camera but player!)
-        transform.Rotate(Vector3.up * (mouseX * Time.deltaTime) * xSensitivity);
+        // rotate player body
+        body.Rotate(Vector3.up * (mouseX * Time.deltaTime) * xSensitivity);
     }
 }
