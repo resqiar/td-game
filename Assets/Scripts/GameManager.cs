@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -13,10 +15,13 @@ public class GameManager : MonoBehaviour
 
     public TMP_Text waveText;
 
-    // Start is called before the first frame update
+    private int towerCount; // Number of towers in the game
+
     void Start()
     {
-        
+        // Find all objects with the "tower" tag and count them
+        GameObject[] towers = GameObject.FindGameObjectsWithTag("tower");
+        towerCount = towers.Length;   
     }
 
     void FixedUpdate()
@@ -42,6 +47,15 @@ public class GameManager : MonoBehaviour
             spawned.GetComponent<EnemyManager>().game = GetComponent<GameManager>();
 
             enemiesRemain++;
+        }
+    }
+
+    // Method to decrement tower count
+    public void DecrementTowerCount() {
+        towerCount--;
+        
+        if (towerCount <= 0) {
+            SceneManager.LoadScene("GameOverScene"); // load game over scene
         }
     }
 }
