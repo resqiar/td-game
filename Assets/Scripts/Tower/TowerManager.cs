@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class TowerManager : MonoBehaviour
 {
@@ -17,33 +18,36 @@ public class TowerManager : MonoBehaviour
 
     public float attackTimer = 100f;
     public float attackDamage = 25f;
+
     public float attackCooldown = 1f;
     public float attackRadius = 12f;
 
+    private AudioSource audio;
+    public AudioClip fireballShootAudio;
+
+    public TMP_Text ttext;
 
     void Start() {
         currentHealth = maxHealth; // Set the initial health to the maximum
         game = FindObjectOfType<GameManager>();
         target = GameObject.FindGameObjectWithTag("enemy");
+        audio = GetComponent<AudioSource>();
     }
 
     void Update() {
         // Find all enemies within the attack radius
         Collider[] colliders = Physics.OverlapSphere(transform.position, attackRadius);
-        // List<GameObject> enemyObjects = new List<GameObject>();
 
         // Select the closest enemy as the target
         float closestDistance = float.MaxValue;
         GameObject closestEnemy = null;
 
         foreach (Collider collider in colliders) {
-            if (collider.gameObject.CompareTag("enemy"))
-            {
-                // enemyObjects.Add(collider.gameObject);
+            if (collider.gameObject.CompareTag("enemy")) {
+                // Calculate distance between tower and enemy
                 float distance = Vector3.Distance(transform.position, collider.transform.position);
 
-                if (distance < closestDistance)
-                {
+                if (distance < closestDistance) {
                     closestDistance = distance;
                     closestEnemy = collider.gameObject;
                 }
@@ -58,6 +62,12 @@ public class TowerManager : MonoBehaviour
         if (target != null && attackTimer <= 0f)
         {
             AttackTarget();
+
+            // play fireball shoot audio 
+            audio.volume = 1f;
+            audio.PlayOneShot(fireballShootAudio);
+            audio.volume = 0.5f;
+
             attackTimer = attackCooldown; // Reset the attack cooldown timer
         }
 
@@ -69,27 +79,11 @@ public class TowerManager : MonoBehaviour
     }
 
     public void AttackTarget() {
-        // Update the attack cooldown timer 
-        // attackTimer -= Time.deltaTime;
-// 
-        // if (attackTimer <= 0f) {
-            // Performs the attack 
-            // target.GetComponent<EnemyManager>().TakeDamage(attackDamage);
-// 
-            // Instantiate the fire prefab
-            // GameObject fireInstance = Instantiate(firePrefab,transform.position, Quaternion.identity);
-// 
-            // Optionally, you can parent the fire instance to the tower or target
-            // fireInstance.transform.parent = transform;
-// 
-            // Reset the cooldown timer
-            // attackTimer = attackCooldown;
-        // }
-         // Check if a valid target exists
+        // Check if a valid target exists
         if (target != null)
         {
             // Instantiate the fire prefab
-            GameObject fireInstance = Instantiate(firePrefab, transform.position, Quaternion.identity);
+            GameObject fireInstance = Instantiate(firePrefab, transform.position + Vector3.up * 10, Quaternion.identity);
 
             // Calculate the direction towards the target
             Vector3 direction = (target.transform.position - transform.position).normalized;
@@ -99,6 +93,7 @@ public class TowerManager : MonoBehaviour
 
             // Set the target and launch the fireball
             fireball.SetTarget(target.transform);
+            fireball.SetDamage(attackDamage);
             fireball.Launch(direction);
 
             // Reset the attack cooldown timer
@@ -112,9 +107,11 @@ public class TowerManager : MonoBehaviour
         currentHealth -= damage; 
 
         if (currentHealth <= 0) {
+            ttext.text = "T 0";
             DestroyTower(); // If the tower's health is depleted, destroy it
             game.DecrementTowerCount();
         } else {
+            ttext.text = "T " + currentHealth.ToString();
             StartCoroutine(DamageCooldown());
         }
     }

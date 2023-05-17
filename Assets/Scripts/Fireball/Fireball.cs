@@ -6,9 +6,9 @@ public class Fireball : MonoBehaviour
 {
     public float speed = 10f; // Speed at which the fireball moves
     public float lifetime = 3f; // Time before the fireball is destroyed
-    public int damage = 20; // Amount of damage to inflict on the enemy
-
+    private float damage = 25f; // Amount of damage to inflict on the enemy
     private Transform target; // Reference to the target enemy
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,26 +27,27 @@ public class Fireball : MonoBehaviour
         }    
     }
 
-    public void SetTarget(Transform enemyTransform)
-    {
+    public void SetTarget(Transform enemyTransform) {
         target = enemyTransform;
     }
 
-    public void Launch(Vector3 direction)
-    {
+    public void SetDamage(float attackDamage) {
+        damage = attackDamage;
+    }
+
+    public void Launch(Vector3 direction) {
         transform.forward = direction; // Orient the fireball in the launch direction
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision collision)
     {
         // Check if the fireball collided with an enemy
-        if (other.CompareTag("Enemy"))
-        {
+        if (collision.gameObject.CompareTag("enemy")) {
             // Apply damage to the enemy
-            EnemyManager enemyManager = other.GetComponent<EnemyManager>();
-            if (enemyManager != null)
-            {
-                enemyManager.TakeDamage(damage);
+            EnemyManager enemyManager = collision.gameObject.GetComponent<EnemyManager>();
+
+            if (enemyManager != null) {
+                enemyManager.ApplyDamage(damage);
             }
 
             // Destroy the fireball on collision with an enemy

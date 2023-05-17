@@ -20,7 +20,7 @@ public class EnemyManager : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
 
         // Set stopping distance
-        agent.stoppingDistance = 6.0f;
+        agent.stoppingDistance = 7.0f;
 
         currentHealth = health;
     }
@@ -53,17 +53,5 @@ public class EnemyManager : MonoBehaviour
             // just delete the object
             Destroy(gameObject);
         }
-    }
-
-    public void TakeDamage(float damageAmount) {
-        currentHealth -= damageAmount;
-
-        if (currentHealth <= 0) {
-            Die();
-        }
-    }
-
-    void Die() {
-        Destroy(gameObject);
     }
 }

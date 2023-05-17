@@ -38,8 +38,20 @@ public class WeaponManager : MonoBehaviour
     }
 
     void DisplayMuzzleFlash() {
-        GameObject light = Instantiate(muzzleFlash, muzzlePos);
-        Destroy(light, 1f);
+        GameObject muzzle = Instantiate(muzzleFlash, muzzlePos.position, muzzlePos.rotation);
+        muzzle.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f); // Adjust the scale as needed
+
+        // Generate random rotation value around the X-axis
+        float randomRotationX = Random.Range(0f, 360f);
+
+        // Apply random rotation to the muzzle flash
+        // muzzle.transform.rotation = Quaternion.Euler(randomRotationX, muzzlePos.position.y, muzzlePos.position.z);
+        Quaternion finalRotation = muzzlePos.rotation * Quaternion.Euler(randomRotationX, 0f, 0f);
+
+        // Apply the final rotation to the muzzle flash
+        muzzle.transform.rotation = finalRotation;
+
+        Destroy(muzzle, 0.05f);
     }
 
     void FireBullet() {
