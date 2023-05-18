@@ -12,11 +12,15 @@ public class EnemyManager : MonoBehaviour
     public float health = 200f;
     public float currentHealth;
     public GameManager game;
+    private MoneyManager moneyManager;
+
+    public float killReward = 50f;
 
     // Start is called before the first frame update
     void Start()
     {
         target = GameObject.FindGameObjectWithTag("tower");
+        moneyManager = FindObjectOfType<MoneyManager>();
         agent = GetComponent<NavMeshAgent>();
 
         // Set stopping distance
@@ -49,6 +53,9 @@ public class EnemyManager : MonoBehaviour
         if (health <= 0) {
             // reduce enemies count in the game
             game.enemiesRemain--;
+
+            // apply kill reward / increment money
+            moneyManager.AddMoney(killReward);
 
             // just delete the object
             Destroy(gameObject);

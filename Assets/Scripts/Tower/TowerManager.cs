@@ -7,6 +7,7 @@ public class TowerManager : MonoBehaviour
 {
     public GameManager game;
     public GameObject firePrefab;
+    public GameObject recoverPrefab;
     public GameObject target;
 
     public float maxHealth = 100f; // Maximum health of the tower
@@ -24,6 +25,7 @@ public class TowerManager : MonoBehaviour
 
     private AudioSource audio;
     public AudioClip fireballShootAudio;
+    public AudioClip recoverAudio;
 
     public TMP_Text ttext;
 
@@ -114,6 +116,21 @@ public class TowerManager : MonoBehaviour
             ttext.text = "T " + currentHealth.ToString();
             StartCoroutine(DamageCooldown());
         }
+    }
+
+    public void ApplyRecover(){
+        currentHealth = maxHealth; 
+        ttext.text = "T " + currentHealth.ToString();
+
+        // Instantiate recover particle effect
+        // GameObject recoverEffect = Instantiate(recoverPrefab, transform.position, Quaternion.identity);
+        // recoverEffect.transform.localScale *= 9999f;
+
+        // Play recover sound effect
+        audio.PlayOneShot(recoverAudio);
+
+        // Destroy after certain time
+        // Destroy(recoverEffect, 5f);
     }
 
     private void DestroyTower() {
